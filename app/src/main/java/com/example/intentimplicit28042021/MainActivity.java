@@ -6,8 +6,11 @@ import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.View;
 import android.widget.Toast;
 
@@ -29,11 +32,22 @@ public class MainActivity extends AppCompatActivity {
                 // Check permission granted
                 if (ActivityCompat.checkSelfPermission(MainActivity.this , Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
                     // Xin quyền
-                    ActivityCompat.requestPermissions(
-                            MainActivity.this,
-                            new String[]{Manifest.permission.CAMERA},
-                            REQUEST_CODE_CAMERA
-                            );
+                    if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)){
+                        Intent intent = new Intent();
+                        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                        Uri uri = Uri.fromParts("package", getPackageName(), null);
+                        intent.setData(uri);
+                        intent.addCategory(Intent.CATEGORY_DEFAULT);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                    }else{
+                        ActivityCompat.requestPermissions(
+                                MainActivity.this,
+                                new String[]{Manifest.permission.CAMERA},
+                                REQUEST_CODE_CAMERA
+                        );
+                    }
+
                 }
             }
         });
@@ -48,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
                 Toast.makeText(this, "Chấp thuận sử dụng quyền dùng camera", Toast.LENGTH_SHORT).show();
             }else{
+
                 Toast.makeText(this, "Không chấp thuận dùng camera", Toast.LENGTH_SHORT).show();
             }
         }
