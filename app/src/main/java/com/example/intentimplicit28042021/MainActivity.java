@@ -1,16 +1,26 @@
 package com.example.intentimplicit28042021;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContract;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -47,7 +57,9 @@ public class MainActivity extends AppCompatActivity {
                                 REQUEST_CODE_CAMERA
                         );
                     }
-
+                }else{
+                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    mGetDataImageCamera.launch(intent);
                 }
             }
         });
@@ -60,11 +72,18 @@ public class MainActivity extends AppCompatActivity {
 
         if (requestCode == REQUEST_CODE_CAMERA){
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                Toast.makeText(this, "Chấp thuận sử dụng quyền dùng camera", Toast.LENGTH_SHORT).show();
-            }else{
-
-                Toast.makeText(this, "Không chấp thuận dùng camera", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                mGetDataImageCamera.launch(intent);
             }
         }
     }
+
+    ActivityResultLauncher<Intent> mGetDataImageCamera = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+        @Override
+        public void onActivityResult(ActivityResult result) {
+            Bitmap bitmap = (Bitmap) result.getData().getExtras().get("data");
+            mBinding.imageview.setImageBitmap(bitmap);
+        }
+    });
+
 }
