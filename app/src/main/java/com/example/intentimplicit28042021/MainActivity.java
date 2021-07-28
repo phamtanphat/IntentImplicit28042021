@@ -17,6 +17,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.Settings;
@@ -30,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
 
     ActivityMainBinding mBinding;
     int REQUEST_CODE_CAMERA = 123;
+    int REQUEST_CODE_GALLERY = 234;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,6 +65,33 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        mBinding.buttonGallery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (ActivityCompat.checkSelfPermission(MainActivity.this , Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+                    // Xin quyền
+                    if (shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE)){
+                        Intent intent = new Intent();
+                        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                        Uri uri = Uri.fromParts("package", getPackageName(), null);
+                        intent.setData(uri);
+                        intent.addCategory(Intent.CATEGORY_DEFAULT);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                    }else{
+                        ActivityCompat.requestPermissions(
+                                MainActivity.this,
+                                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                                REQUEST_CODE_GALLERY
+                        );
+                    }
+                }else{
+//                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//                    mGetDataImageCamera.launch(intent);
+                }
+            }
+        });
     }
 
 
@@ -81,8 +110,11 @@ public class MainActivity extends AppCompatActivity {
     ActivityResultLauncher<Intent> mGetDataImageCamera = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
-            Bitmap bitmap = (Bitmap) result.getData().getExtras().get("data");
-            mBinding.imageview.setImageBitmap(bitmap);
+            if (result.getResultCode() == RESULT_OK){
+                Bitmap bitmap = (Bitmap) result.getData().getExtras().get("data");
+                mBinding.imageview.setImageBitmap(bitmap);
+            }
+
         }
     });
 
