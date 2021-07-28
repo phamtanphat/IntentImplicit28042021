@@ -93,6 +93,14 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        mBinding.buttonGotoScreen2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this,MainActivity2.class);
+                mGetDataMain2Activity.launch(intent);
+            }
+        });
     }
 
 
@@ -133,6 +141,17 @@ public class MainActivity extends AppCompatActivity {
                 if (uri != null){
                     mBinding.imageview.setImageURI(uri);
                 }
+            }
+
+        }
+    });
+
+    ActivityResultLauncher<Intent> mGetDataMain2Activity = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+        @Override
+        public void onActivityResult(ActivityResult result) {
+            if (result.getResultCode() == RESULT_OK){
+                String chuoi = result.getData().getStringExtra("string");
+                mBinding.textViewData.setText(chuoi);
             }
 
         }

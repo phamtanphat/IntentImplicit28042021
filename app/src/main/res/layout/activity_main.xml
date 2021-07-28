@@ -25,4 +25,21 @@
         android:layout_centerInParent="true"
         android:layout_width="300dp"
         android:layout_height="300dp"/>
+    <TextView
+        android:id="@+id/textViewData"
+        android:layout_marginTop="20dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/imageview"
+        android:text="Data"
+        android:textSize="30sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+    <Button
+        android:text="Go to screen2"
+        android:layout_marginTop="20dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/textViewData"
+        android:id="@+id/buttonGotoScreen2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 </RelativeLayout>
