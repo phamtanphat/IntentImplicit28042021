@@ -87,8 +87,9 @@ public class MainActivity extends AppCompatActivity {
                         );
                     }
                 }else{
-//                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//                    mGetDataImageCamera.launch(intent);
+                    Intent intent = new Intent(Intent.ACTION_PICK);
+                    intent.setType("image/*");
+                    mGetDataGallery.launch(intent);
                 }
             }
         });
@@ -105,6 +106,13 @@ public class MainActivity extends AppCompatActivity {
                 mGetDataImageCamera.launch(intent);
             }
         }
+        if (requestCode == REQUEST_CODE_GALLERY){
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                Intent intent = new Intent(Intent.ACTION_PICK);
+                intent.setType("image/*");
+                mGetDataGallery.launch(intent);
+            }
+        }
     }
 
     ActivityResultLauncher<Intent> mGetDataImageCamera = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
@@ -113,6 +121,18 @@ public class MainActivity extends AppCompatActivity {
             if (result.getResultCode() == RESULT_OK){
                 Bitmap bitmap = (Bitmap) result.getData().getExtras().get("data");
                 mBinding.imageview.setImageBitmap(bitmap);
+            }
+
+        }
+    });
+    ActivityResultLauncher<Intent> mGetDataGallery = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+        @Override
+        public void onActivityResult(ActivityResult result) {
+            if (result.getResultCode() == RESULT_OK){
+                Uri uri = result.getData().getData();
+                if (uri != null){
+                    mBinding.imageview.setImageURI(uri);
+                }
             }
 
         }
